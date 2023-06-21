@@ -6,7 +6,7 @@ use core::fmt;
 #[cfg(feature = "alloc")]
 mod archive;
 mod decode;
-// The encoder requires the std::io::Trait
+// The encoder requires the std::io::Write trait
 #[cfg(feature = "std")]
 mod encode;
 mod file;
