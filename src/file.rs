@@ -17,7 +17,8 @@ struct PackItFileHeaderPrelude {
 
 impl PackItFileHeaderPrelude {
     fn new(name: &str, data: &[u8]) -> PackItResult<Self> {
-        let name_len = name.len()
+        let name_len = name
+            .len()
             .try_into()
             .map_err(|_| PackItError::InvalidFileName)
             .map(U16::new)?;
@@ -30,8 +31,7 @@ impl PackItFileHeaderPrelude {
     }
 
     fn load(data: &[u8]) -> PackItResult<Self> {
-        let prelude = Self::read_from_prefix(data)
-            .ok_or(PackItError::UnexpectedEOF)?;
+        let prelude = Self::read_from_prefix(data).ok_or(PackItError::UnexpectedEOF)?;
         if prelude.header_type.get() != 1 {
             return Err(PackItError::InvalidFileHeader);
         }
@@ -63,12 +63,11 @@ impl<'a> PackItFileHeader<'a> {
         let prelude = PackItFileHeaderPrelude::load(data)?;
 
         let start = size_of_val(&prelude);
-        let end = start.checked_add(prelude.name_len.into())
+        let end = start
+            .checked_add(prelude.name_len.into())
             .ok_or(PackItError::InvalidFileHeader)?;
-        let raw_file_name = data.get(start..end)
-            .ok_or(PackItError::UnexpectedEOF)?;
-        let name = core::str::from_utf8(raw_file_name)
-            .map_err(|_| PackItError::InvalidFileName)?;
+        let raw_file_name = data.get(start..end).ok_or(PackItError::UnexpectedEOF)?;
+        let name = core::str::from_utf8(raw_file_name).map_err(|_| PackItError::InvalidFileName)?;
 
         Ok(Self { prelude, name })
     }
@@ -106,10 +105,10 @@ impl<'a> PackItFile<'a> {
     pub(crate) fn load(data: &'a [u8]) -> PackItResult<Self> {
         let hdr = PackItFileHeader::load(data)?;
         let start = hdr.header_size();
-        let end =  start.checked_add(hdr.file_size())
+        let end = start
+            .checked_add(hdr.file_size())
             .ok_or(PackItError::InvalidFileHeader)?;
-        let data = data.get(start..end)
-            .ok_or(PackItError::UnexpectedEOF)?;
+        let data = data.get(start..end).ok_or(PackItError::UnexpectedEOF)?;
         Ok(Self { hdr, data })
     }
 

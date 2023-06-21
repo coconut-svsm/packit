@@ -26,8 +26,7 @@ impl PackItHeader {
     }
 
     pub(crate) fn load(data: &[u8]) -> PackItResult<Self> {
-        let header = Self::read_from_prefix(data)
-            .ok_or(PackItError::UnexpectedEOF)?;
+        let header = Self::read_from_prefix(data).ok_or(PackItError::UnexpectedEOF)?;
 
         if header.magic != PACKIT_MAGIC {
             return Err(PackItError::InvalidHeader);

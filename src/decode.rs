@@ -30,7 +30,8 @@ impl<'a> core::iter::Iterator for PackItArchiveDecoder<'a> {
     type Item = PackItResult<PackItFile<'a>>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let data = self.raw_data
+        let data = self
+            .raw_data
             .get(self.current..)
             .filter(|d| !d.is_empty())?;
 
