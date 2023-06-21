@@ -1,0 +1,20 @@
+[package]
+name = "packit"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "packit"
+path = "src/main.rs"
+required-features = ["cli"]
+
+[dependencies]
+clap = { version = "4.3.5", features = ["derive"], optional = true }
+memmap = { version = "0.7.0", optional = true }
+zerocopy = "0.6.1"
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+cli = ["std", "dep:clap", "dep:memmap"]
