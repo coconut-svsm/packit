@@ -10,11 +10,11 @@ required-features = ["cli"]
 
 [dependencies]
 clap = { version = "4.3.5", features = ["derive"], optional = true }
-memmap = { version = "0.7.0", optional = true }
+memmap2 = { version = "0.7.0", optional = true }
 zerocopy = "0.6.1"
 
 [features]
 default = []
 alloc = []
 std = ["alloc"]
-cli = ["std", "dep:clap", "dep:memmap"]
+cli = ["std", "dep:clap", "dep:memmap2"]

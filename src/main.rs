@@ -1,5 +1,5 @@
 use clap::Parser;
-use memmap::Mmap;
+use memmap2::Mmap;
 use packit::{PackItArchiveDecoder, PackItArchiveEncoder, PackItError, PackItFile, PackItResult};
 use std::fs;
 use std::io::{self, ErrorKind, Write};
@@ -147,7 +147,7 @@ impl UnpackParams {
     fn run(&self) -> PackItResult<()> {
         // Prepare the decodder
         let file = fs::File::open(&self.input)?;
-        let mem = unsafe { memmap::Mmap::map(&file) }?;
+        let mem = unsafe { Mmap::map(&file) }?;
         let dec = PackItArchiveDecoder::load(&mem)?;
 
         // Create and form the full output path
