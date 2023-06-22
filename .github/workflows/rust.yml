@@ -53,8 +53,15 @@ jobs:
       with:
         command: fmt
         args: --all -- --check
-        
-    - name: Clippy
+
+    - name: Clippy (no features)
       uses: actions-rs/cargo@v1
       with:
         command: clippy
+        args: --no-default-features
+        
+    - name: Clippy (all features)
+      uses: actions-rs/cargo@v1
+      with:
+        command: clippy
+        args: --all-features
