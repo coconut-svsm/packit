@@ -53,11 +53,7 @@ impl PackParams {
         let mut dst = fs::File::create(&self.output)?;
         let mut ar = PackItArchiveEncoder::new(&mut dst)?;
 
-        for entry in fs::read_dir(&self.input)? {
-            let entry = entry?;
-            self.process_entry(&entry, &mut ar)?;
-        }
-
+        self.process_entries(fs::read_dir(&self.input)?, &mut ar)?;
         dst.sync_all()?;
 
         Ok(())
@@ -99,12 +95,22 @@ impl PackParams {
                 }
             }
         } else if etype.is_dir() {
-            for entry in fs::read_dir(&path)? {
-                let entry = entry?;
-                self.process_entry(&entry, ar)?;
-            }
+            self.process_entries(fs::read_dir(&path)?, ar)?;
         }
 
+        Ok(())
+    }
+
+    fn process_entries<W: Write>(
+        &self,
+        entries: fs::ReadDir,
+        ar: &mut PackItArchiveEncoder<W>,
+    ) -> PackItResult<()> {
+        let mut entries = entries.collect::<io::Result<Vec<_>>>()?;
+        entries.sort_by_cached_key(|e| e.path());
+        for entry in entries.iter() {
+            self.process_entry(entry, ar)?;
+        }
         Ok(())
     }
 }
