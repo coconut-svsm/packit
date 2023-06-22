@@ -122,7 +122,8 @@ struct UnpackParams {
     verbose: bool,
 }
 
-// TODO: add test(s) for this function
+// Check that a path does not go shallow enough to escape a preprended
+// base directory
 fn verify_path<P: AsRef<Path>>(path: P) -> bool {
     // Depth zero means base directory. If we go below 0 this path
     // points outside the base directory
@@ -234,5 +235,31 @@ fn main() -> ExitCode {
             eprintln!("Error: {}", e);
             ExitCode::FAILURE
         }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_verify_path() {
+        assert!(verify_path("a/b/c"));
+        assert!(verify_path("/a/b/c"));
+        assert!(!verify_path("../a/b/c"));
+        assert!(!verify_path("/../a/b/c"));
+        assert!(!verify_path("../b/b/c"));
+        assert!(!verify_path("/../b/b/c"));
+        assert!(verify_path("a/../a/b/c"));
+        assert!(verify_path("a/b/../c/d/e"));
+        assert!(verify_path("a/b/../../c/d/e"));
+        assert!(!verify_path("a/b/../../../c/d/e"));
+        assert!(!verify_path("/a/b/../../../c/d/e"));
+        assert!(verify_path("a/b/c/d/e"));
+        assert!(verify_path("/a/b/c/d/e"));
+        assert!(verify_path("a/./c/d/e"));
+        assert!(verify_path("/a/./c/d/e"));
+        assert!(!verify_path("a/./../../c/d/e"));
+        assert!(!verify_path("/a/./../../c/d/e"));
     }
 }
