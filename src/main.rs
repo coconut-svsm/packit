@@ -138,9 +138,12 @@ fn verify_path<P: AsRef<Path>>(path: P) -> bool {
             Component::Normal(..) => depth += 1,
             Component::ParentDir => depth -= 1,
         }
+        if depth < 0 {
+            return false;
+        }
     }
 
-    depth >= 0
+    true
 }
 
 impl UnpackParams {
