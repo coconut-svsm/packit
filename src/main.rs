@@ -155,7 +155,7 @@ fn verify_path<P: AsRef<Path>>(path: P) -> bool {
 
 impl UnpackParams {
     fn run(&self) -> PackItResult<()> {
-        // Prepare the decodder
+        // Prepare the decoder
         let file = fs::File::open(&self.input)?;
         let mem = unsafe { Mmap::map(&file) }?;
         let dec = PackItArchiveDecoder::load(&mem)?;
