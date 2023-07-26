@@ -1,3 +1,9 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//
+// Copyright (c) 2022-2023 SUSE LLC
+//
+// Author: Carlos López <carlos.lopez@suse.com
+
 use clap::Parser;
 use memmap2::Mmap;
 use packit::{PackItArchiveDecoder, PackItArchiveEncoder, PackItError, PackItFile, PackItResult};

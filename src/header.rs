@@ -1,3 +1,9 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//
+// Copyright (c) 2022-2023 SUSE LLC
+//
+// Author: Carlos López <carlos.lopez@suse.com
+
 use crate::{PackItError, PackItResult};
 use core::mem::size_of;
 #[cfg(feature = "std")]
