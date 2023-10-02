@@ -1,6 +1,6 @@
 # PackIt
 
-A simple library and CLI utility to pack filesystems into single blobs.
+A simple library and CLI utility to pack filesystems into single blobs. It is a rework of the [original tooling written by Jörg Rödel](https://github.com/joergroedel/packit).
 
 ## Feature flags ##
 

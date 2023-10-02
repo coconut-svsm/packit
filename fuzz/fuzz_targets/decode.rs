@@ -1,3 +1,9 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//
+// Copyright (c) 2022-2023 SUSE LLC
+//
+// Author: Carlos López <carlos.lopez@suse.com
+
 #![no_main]
 
 use libfuzzer_sys::fuzz_target;
