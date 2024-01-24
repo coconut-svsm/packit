@@ -9,9 +9,9 @@ use core::mem::size_of_val;
 #[cfg(feature = "std")]
 use std::io::Write;
 use zerocopy::byteorder::LittleEndian;
-use zerocopy::{AsBytes, FromBytes, U16, U64};
+use zerocopy::{AsBytes, FromBytes, FromZeroes, U16, U64};
 
-#[derive(Clone, Copy, Debug, FromBytes, AsBytes)]
+#[derive(Clone, Copy, Debug, FromBytes, FromZeroes, AsBytes)]
 #[repr(C, packed)]
 struct PackItFileHeaderPrelude {
     // TODO: make a repr(u16) enum out of this field with the
