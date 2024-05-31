@@ -9,13 +9,13 @@ use core::mem::size_of;
 #[cfg(feature = "std")]
 use std::io::Write;
 use zerocopy::byteorder::LittleEndian;
-use zerocopy::{AsBytes, FromBytes, U32};
+use zerocopy::{AsBytes, FromBytes, FromZeroes, U32};
 
 /// Header Magic (PKIT)
 pub const PACKIT_MAGIC: [u8; 4] = [0x50, 0x4b, 0x49, 0x54];
 
 /// A PackIt archive header
-#[derive(AsBytes, Clone, Copy, Debug, FromBytes)]
+#[derive(AsBytes, Clone, Copy, Debug, FromBytes, FromZeroes)]
 #[repr(C)]
 pub struct PackItHeader {
     magic: [u8; 4],
