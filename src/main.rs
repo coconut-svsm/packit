@@ -95,6 +95,8 @@ impl PackParams {
                     ar.write_file(&pfile)?;
                 }
                 _ => {
+                    // SAFETY: assume user-provided file is not being modified.
+                    // Worst case scenario, we read the wrong bytes.
                     let file_data = unsafe { Mmap::map(&file) }?;
                     let pfile = PackItFile::new(dst_path, &file_data)?;
                     ar.write_file(&pfile)?;
@@ -163,6 +165,8 @@ impl UnpackParams {
     fn run(&self) -> PackItResult<()> {
         // Prepare the decoder
         let file = fs::File::open(&self.input)?;
+        // SAFETY: assume user-provided file is not being modified.
+        // Worst case scenario, we read the wrong bytes.
         let mem = unsafe { Mmap::map(&file) }?;
         let dec = PackItArchiveDecoder::load(&mem)?;
 
@@ -223,6 +227,8 @@ struct ListParams {
 impl ListParams {
     fn run(&self) -> PackItResult<()> {
         let file = fs::File::open(&self.input)?;
+        // SAFETY: assume user-provided file is not being modified.
+        // Worst case scenario, we read the wrong bytes.
         let mem = unsafe { Mmap::map(&file) }?;
         let dec = PackItArchiveDecoder::load(&mem)?;
         for file in dec {
