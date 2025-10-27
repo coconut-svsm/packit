@@ -9,9 +9,9 @@ use core::mem::size_of_val;
 #[cfg(feature = "std")]
 use std::io::Write;
 use zerocopy::byteorder::LittleEndian;
-use zerocopy::{AsBytes, FromBytes, FromZeroes, U16, U64};
+use zerocopy::{FromBytes, Immutable, IntoBytes, U16, U64};
 
-#[derive(Clone, Copy, Debug, FromBytes, AsBytes, FromZeroes)]
+#[derive(Clone, Copy, Debug, FromBytes, IntoBytes, Immutable)]
 #[repr(C, packed)]
 struct PackItFileHeaderPrelude {
     // TODO: make a repr(u16) enum out of this field with the
@@ -37,7 +37,7 @@ impl PackItFileHeaderPrelude {
     }
 
     fn load(data: &[u8]) -> PackItResult<Self> {
-        let prelude = Self::read_from_prefix(data).ok_or(PackItError::UnexpectedEOF)?;
+        let (prelude, _) = Self::read_from_prefix(data).map_err(|_| PackItError::UnexpectedEOF)?;
         if prelude.header_type.get() != 1 {
             return Err(PackItError::InvalidFileHeader);
         }

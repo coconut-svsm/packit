@@ -9,13 +9,13 @@ use core::mem::size_of;
 #[cfg(feature = "std")]
 use std::io::Write;
 use zerocopy::byteorder::LittleEndian;
-use zerocopy::{AsBytes, FromBytes, FromZeroes, U32};
+use zerocopy::{FromBytes, Immutable, IntoBytes, U32};
 
 /// Header Magic (PKIT)
 pub const PACKIT_MAGIC: [u8; 4] = [0x50, 0x4b, 0x49, 0x54];
 
 /// A PackIt archive header
-#[derive(AsBytes, Clone, Copy, Debug, FromBytes, FromZeroes)]
+#[derive(Clone, Copy, Debug, FromBytes, IntoBytes, Immutable)]
 #[repr(C)]
 pub struct PackItHeader {
     magic: [u8; 4],
@@ -32,7 +32,7 @@ impl PackItHeader {
     }
 
     pub(crate) fn load(data: &[u8]) -> PackItResult<Self> {
-        let header = Self::read_from_prefix(data).ok_or(PackItError::UnexpectedEOF)?;
+        let (header, _) = Self::read_from_prefix(data).map_err(|_| PackItError::UnexpectedEOF)?;
 
         if header.magic != PACKIT_MAGIC {
             return Err(PackItError::InvalidHeader);
