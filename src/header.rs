@@ -31,14 +31,15 @@ impl PackItHeader {
         }
     }
 
-    pub(crate) fn load(data: &[u8]) -> PackItResult<Self> {
-        let (header, _) = Self::read_from_prefix(data).map_err(|_| PackItError::UnexpectedEOF)?;
+    pub(crate) fn load(data: &[u8]) -> PackItResult<(Self, &[u8])> {
+        let (header, rest) =
+            Self::read_from_prefix(data).map_err(|_| PackItError::UnexpectedEOF)?;
 
         if header.magic != PACKIT_MAGIC {
             return Err(PackItError::InvalidHeader);
         }
 
-        Ok(header)
+        Ok((header, rest))
     }
 
     #[cfg(feature = "std")]
