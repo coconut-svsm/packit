@@ -9,9 +9,9 @@ use core::mem::size_of_val;
 #[cfg(feature = "std")]
 use std::io::Write;
 use zerocopy::byteorder::LittleEndian;
-use zerocopy::{AsBytes, FromBytes, FromZeroes, U16, U64};
+use zerocopy::{FromBytes, Immutable, IntoBytes, U16, U64};
 
-#[derive(Clone, Copy, Debug, FromBytes, AsBytes, FromZeroes)]
+#[derive(Clone, Copy, Debug, FromBytes, IntoBytes, Immutable)]
 #[repr(C, packed)]
 struct PackItFileHeaderPrelude {
     // TODO: make a repr(u16) enum out of this field with the
@@ -36,15 +36,16 @@ impl PackItFileHeaderPrelude {
         })
     }
 
-    fn load(data: &[u8]) -> PackItResult<Self> {
-        let prelude = Self::read_from_prefix(data).ok_or(PackItError::UnexpectedEOF)?;
+    fn load(data: &[u8]) -> PackItResult<(Self, &[u8])> {
+        let (prelude, rest) =
+            Self::read_from_prefix(data).map_err(|_| PackItError::UnexpectedEOF)?;
         if prelude.header_type.get() != 1 {
             return Err(PackItError::InvalidFileHeader);
         }
         if prelude.name_len.get() == 0 {
             return Err(PackItError::InvalidFileHeader);
         }
-        Ok(prelude)
+        Ok((prelude, rest))
     }
 
     #[cfg(feature = "std")]
@@ -65,17 +66,15 @@ impl<'a> PackItFileHeader<'a> {
         Ok(Self { prelude, name })
     }
 
-    fn load(data: &'a [u8]) -> PackItResult<Self> {
-        let prelude = PackItFileHeaderPrelude::load(data)?;
+    fn load(data: &'a [u8]) -> PackItResult<(Self, &'a [u8])> {
+        let (prelude, rest) = PackItFileHeaderPrelude::load(data)?;
 
-        let start = size_of_val(&prelude);
-        let end = start
-            .checked_add(prelude.name_len.into())
-            .ok_or(PackItError::InvalidFileHeader)?;
-        let raw_file_name = data.get(start..end).ok_or(PackItError::UnexpectedEOF)?;
+        let (raw_file_name, rest) = rest
+            .split_at_checked(prelude.name_len.into())
+            .ok_or(PackItError::UnexpectedEOF)?;
         let name = core::str::from_utf8(raw_file_name).map_err(|_| PackItError::InvalidFileName)?;
 
-        Ok(Self { prelude, name })
+        Ok((Self { prelude, name }, rest))
     }
 
     #[cfg(feature = "std")]
@@ -108,14 +107,12 @@ impl<'a> PackItFile<'a> {
         Ok(Self { hdr, data })
     }
 
-    pub(crate) fn load(data: &'a [u8]) -> PackItResult<Self> {
-        let hdr = PackItFileHeader::load(data)?;
-        let start = hdr.header_size();
-        let end = start
-            .checked_add(hdr.file_size())
-            .ok_or(PackItError::InvalidFileHeader)?;
-        let data = data.get(start..end).ok_or(PackItError::UnexpectedEOF)?;
-        Ok(Self { hdr, data })
+    pub(crate) fn load(data: &'a [u8]) -> PackItResult<(Self, &'a [u8])> {
+        let (hdr, rest) = PackItFileHeader::load(data)?;
+        let (data, rest) = rest
+            .split_at_checked(hdr.file_size())
+            .ok_or(PackItError::UnexpectedEOF)?;
+        Ok((Self { hdr, data }, rest))
     }
 
     #[cfg(feature = "std")]
