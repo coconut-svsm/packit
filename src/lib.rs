@@ -135,7 +135,7 @@ mod tests {
         let mut dst = Vec::new();
         let mut ar = PackItArchiveEncoder::new(&mut dst).unwrap();
         for file in files.iter() {
-            ar.write_file(&file).unwrap();
+            ar.write_file(file).unwrap();
         }
 
         // Decode from buffer
