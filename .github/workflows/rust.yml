@@ -65,3 +65,9 @@ jobs:
       with:
         command: clippy
         args: --all-features
+
+    - name: Clippy on tests
+      uses: actions-rs/cargo@v1
+      with:
+        command: clippy
+        args: --tests --all-features
