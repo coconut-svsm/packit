@@ -250,7 +250,7 @@ fn main() -> ExitCode {
     match res {
         Ok(()) => ExitCode::SUCCESS,
         Err(e) => {
-            eprintln!("Error: {}", e);
+            eprintln!("Error: {e}");
             ExitCode::FAILURE
         }
     }

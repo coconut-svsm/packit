@@ -56,7 +56,7 @@ impl fmt::Display for PackItError {
             Self::InvalidFileHeader => write!(f, "Invalid file header"),
             Self::InvalidFileName => write!(f, "File name too long or not valid UTF-8"),
             #[cfg(feature = "std")]
-            Self::IoError(e) => write!(f, "I/O error: {}", e),
+            Self::IoError(e) => write!(f, "I/O error: {e}"),
         }
     }
 }
