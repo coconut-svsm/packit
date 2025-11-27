@@ -15,7 +15,7 @@ pub struct PackItArchiveDecoder<'a> {
 
 impl<'a> PackItArchiveDecoder<'a> {
     /// The archive header
-    pub fn header(&self) -> PackItHeader {
+    pub const fn header(&self) -> PackItHeader {
         self.hdr
     }
 

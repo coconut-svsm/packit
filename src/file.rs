@@ -84,11 +84,11 @@ impl<'a> PackItFileHeader<'a> {
             .map_err(PackItError::IoError)
     }
 
-    fn header_size(&self) -> usize {
+    const fn header_size(&self) -> usize {
         size_of_val(&self.prelude) + self.name.len()
     }
 
-    fn file_size(&self) -> usize {
+    const fn file_size(&self) -> usize {
         self.prelude.file_size.get() as usize
     }
 }
@@ -133,7 +133,7 @@ impl<'a> PackItFile<'a> {
 
     /// The total size of the file in the archive, including the
     /// header and contents
-    pub fn total_size(&self) -> usize {
+    pub const fn total_size(&self) -> usize {
         self.hdr.header_size() + self.hdr.file_size()
     }
 }

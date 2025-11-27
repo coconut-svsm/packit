@@ -27,7 +27,7 @@ impl<'a, W: Write> PackItArchiveEncoder<'a, W> {
     }
 
     /// Get the archive header
-    pub fn header(&self) -> PackItHeader {
+    pub const fn header(&self) -> PackItHeader {
         self.hdr
     }
 
