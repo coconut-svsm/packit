@@ -14,7 +14,7 @@ use alloc::vec::Vec;
 #[cfg(feature = "std")]
 use std::io::Write;
 
-/// An structure describing a PackIt archive.
+/// An structure describing a `PackIt` archive.
 #[derive(Clone, Debug)]
 pub struct PackItArchive<'a> {
     hdr: PackItHeader,
@@ -60,6 +60,10 @@ impl<'a> PackItArchive<'a> {
 
     /// Encode the whole archive to the specified writer in one go.
     /// This uses a [`PackItArchiveEncoder`] under the hood.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if writing to `dst` fails.
     #[cfg(feature = "std")]
     pub fn write<W: Write>(&self, dst: &mut W) -> PackItResult<()> {
         let mut encoder = PackItArchiveEncoder::with_header(self.hdr, dst)?;

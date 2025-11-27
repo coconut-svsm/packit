@@ -22,6 +22,9 @@ struct PackItFileHeaderPrelude {
 }
 
 impl PackItFileHeaderPrelude {
+    /// # Errors
+    ///
+    /// Returns an error if the file name is too long.
     fn new(name: &str, data: &[u8]) -> PackItResult<Self> {
         let name_len = name
             .len()
@@ -48,6 +51,9 @@ impl PackItFileHeaderPrelude {
         Ok((prelude, rest))
     }
 
+    /// # Errors
+    ///
+    /// Returns an error if writing to `dst` fails.
     #[cfg(feature = "std")]
     fn write<W: Write>(&self, dst: &mut W) -> PackItResult<()> {
         dst.write_all(self.as_bytes()).map_err(PackItError::IoError)
@@ -61,6 +67,9 @@ pub(crate) struct PackItFileHeader<'a> {
 }
 
 impl<'a> PackItFileHeader<'a> {
+    /// # Errors
+    ///
+    /// Returns an error if the file name is too long.
     fn new(name: &'a str, data: &[u8]) -> PackItResult<Self> {
         let prelude = PackItFileHeaderPrelude::new(name, data)?;
         Ok(Self { prelude, name })
@@ -102,6 +111,10 @@ pub struct PackItFile<'a> {
 
 impl<'a> PackItFile<'a> {
     /// Create a new file with the given name and contents.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the file name is too long.
     pub fn new(name: &'a str, data: &'a [u8]) -> PackItResult<Self> {
         let hdr = PackItFileHeader::new(name, data)?;
         Ok(Self { hdr, data })
@@ -116,6 +129,9 @@ impl<'a> PackItFile<'a> {
     }
 
     #[cfg(feature = "std")]
+    /// # Errors
+    ///
+    /// Returns an error if writing to `dst` fails.
     pub(crate) fn write<W: Write>(&self, dst: &mut W) -> PackItResult<()> {
         self.hdr.write(dst)?;
         dst.write_all(self.data).map_err(PackItError::IoError)

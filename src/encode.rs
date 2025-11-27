@@ -7,7 +7,7 @@
 use crate::{PackItFile, PackItHeader, PackItResult};
 use std::io::Write;
 
-/// A lazy PackIt archive encoder.
+/// A lazy `PackIt` archive encoder.
 pub struct PackItArchiveEncoder<'a, W> {
     hdr: PackItHeader,
     writer: &'a mut W,
@@ -15,12 +15,20 @@ pub struct PackItArchiveEncoder<'a, W> {
 
 impl<'a, W: Write> PackItArchiveEncoder<'a, W> {
     /// Create a new encoder with the default header
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if writing to `writer` fails.
     pub fn new(writer: &'a mut W) -> PackItResult<Self> {
         let hdr = PackItHeader::new();
         Self::with_header(hdr, writer)
     }
 
     /// Create a a new encoder with the specified header
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if writing to `writer` fails.
     pub fn with_header(hdr: PackItHeader, writer: &'a mut W) -> PackItResult<Self> {
         hdr.write(writer)?;
         Ok(Self { hdr, writer })
@@ -32,6 +40,10 @@ impl<'a, W: Write> PackItArchiveEncoder<'a, W> {
     }
 
     /// Write a single file to the archive
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if writing to the writer provided in the constructor fails.
     pub fn write_file(&mut self, file: &PackItFile<'_>) -> PackItResult<()> {
         file.write(self.writer)
     }
