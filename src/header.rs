@@ -14,7 +14,7 @@ use zerocopy::{FromBytes, Immutable, IntoBytes, U32};
 /// Header Magic (PKIT)
 pub const PACKIT_MAGIC: [u8; 4] = [0x50, 0x4b, 0x49, 0x54];
 
-/// A PackIt archive header
+/// A `PackIt` archive header
 #[derive(Clone, Copy, Debug, FromBytes, IntoBytes, Immutable)]
 #[repr(C)]
 pub struct PackItHeader {
@@ -24,7 +24,7 @@ pub struct PackItHeader {
 
 impl PackItHeader {
     #[allow(dead_code)]
-    pub(crate) fn new() -> Self {
+    pub(crate) const fn new() -> Self {
         Self {
             magic: PACKIT_MAGIC,
             header_size: U32::new(size_of::<Self>() as u32),
@@ -48,7 +48,7 @@ impl PackItHeader {
     }
 
     /// The size of the archive header
-    pub fn header_size(&self) -> u32 {
+    pub const fn header_size(&self) -> u32 {
         self.header_size.get()
     }
 }

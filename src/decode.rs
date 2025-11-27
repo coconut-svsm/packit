@@ -6,7 +6,7 @@
 
 use crate::{PackItFile, PackItHeader, PackItResult};
 
-/// A lazy raw PackIt archive decoder.
+/// A lazy raw `PackIt` archive decoder.
 #[derive(Clone, Copy, Debug)]
 pub struct PackItArchiveDecoder<'a> {
     hdr: PackItHeader,
@@ -15,11 +15,16 @@ pub struct PackItArchiveDecoder<'a> {
 
 impl<'a> PackItArchiveDecoder<'a> {
     /// The archive header
-    pub fn header(&self) -> PackItHeader {
+    pub const fn header(&self) -> PackItHeader {
         self.hdr
     }
 
     /// Load an archive from an existing blob
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the provided blob is too short or if the
+    /// header is invalid.
     pub fn load(raw_data: &'a [u8]) -> PackItResult<Self> {
         let (hdr, raw_data) = PackItHeader::load(raw_data)?;
         Ok(Self { hdr, raw_data })

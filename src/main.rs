@@ -115,7 +115,7 @@ impl PackParams {
         ar: &mut PackItArchiveEncoder<W>,
     ) -> PackItResult<()> {
         let mut entries = entries.collect::<io::Result<Vec<_>>>()?;
-        entries.sort_by_cached_key(|e| e.path());
+        entries.sort_by_cached_key(fs::DirEntry::path);
         for entry in entries.iter() {
             self.process_entry(entry, ar)?;
         }
@@ -250,7 +250,7 @@ fn main() -> ExitCode {
     match res {
         Ok(()) => ExitCode::SUCCESS,
         Err(e) => {
-            eprintln!("Error: {}", e);
+            eprintln!("Error: {e}");
             ExitCode::FAILURE
         }
     }

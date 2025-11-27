@@ -14,7 +14,7 @@ use alloc::vec::Vec;
 #[cfg(feature = "std")]
 use std::io::Write;
 
-/// An structure describing a PackIt archive.
+/// An structure describing a `PackIt` archive.
 #[derive(Clone, Debug)]
 pub struct PackItArchive<'a> {
     hdr: PackItHeader,
@@ -23,7 +23,7 @@ pub struct PackItArchive<'a> {
 
 impl<'a> PackItArchive<'a> {
     /// Create a new empty archive.
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self {
             hdr: PackItHeader::new(),
             files: Vec::new(),
@@ -31,7 +31,7 @@ impl<'a> PackItArchive<'a> {
     }
 
     /// Create a a new empty archive with the specified header
-    pub fn with_header(hdr: PackItHeader) -> Self {
+    pub const fn with_header(hdr: PackItHeader) -> Self {
         Self {
             hdr,
             files: Vec::new(),
@@ -39,7 +39,7 @@ impl<'a> PackItArchive<'a> {
     }
 
     /// Get the archive header.
-    pub fn header(&self) -> PackItHeader {
+    pub const fn header(&self) -> PackItHeader {
         self.hdr
     }
 
@@ -49,17 +49,21 @@ impl<'a> PackItArchive<'a> {
     }
 
     /// Get the number of files in the archive
-    pub fn len(&self) -> usize {
+    pub const fn len(&self) -> usize {
         self.files.len()
     }
 
     /// Whether the archive contains any files or not
-    pub fn is_empty(&self) -> bool {
+    pub const fn is_empty(&self) -> bool {
         self.files.is_empty()
     }
 
     /// Encode the whole archive to the specified writer in one go.
     /// This uses a [`PackItArchiveEncoder`] under the hood.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if writing to `dst` fails.
     #[cfg(feature = "std")]
     pub fn write<W: Write>(&self, dst: &mut W) -> PackItResult<()> {
         let mut encoder = PackItArchiveEncoder::with_header(self.hdr, dst)?;
