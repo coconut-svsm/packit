@@ -49,12 +49,12 @@ impl<'a> PackItArchive<'a> {
     }
 
     /// Get the number of files in the archive
-    pub const fn len(&self) -> usize {
+    pub fn len(&self) -> usize {
         self.files.len()
     }
 
     /// Whether the archive contains any files or not
-    pub const fn is_empty(&self) -> bool {
+    pub fn is_empty(&self) -> bool {
         self.files.is_empty()
     }
 
