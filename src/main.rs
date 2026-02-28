@@ -6,7 +6,7 @@
 
 use clap::Parser;
 use memmap2::Mmap;
-use packit::{PackItArchiveDecoder, PackItArchiveEncoder, PackItError, PackItFile, PackItResult};
+use packit::{PackItArchiveDecoder, PackItArchiveEncoder, PackItError, PackItResult};
 use std::fs;
 use std::io::{self, ErrorKind, Write};
 use std::path::{Component, Path, PathBuf};
@@ -86,23 +86,7 @@ impl PackParams {
             }
 
             let file = fs::File::open(&path)?;
-            let meta = file.metadata()?;
-
-            // Map the file and write it to the archive
-            match meta.len() {
-                0 => {
-                    // Special case, a zero-length mapping will fail
-                    let pfile = PackItFile::new(dst_path, &[])?;
-                    ar.write_file(&pfile)?;
-                }
-                _ => {
-                    // SAFETY: assume user-provided file is not being modified.
-                    // Worst case scenario, we read the wrong bytes.
-                    let file_data = unsafe { Mmap::map(&file) }?;
-                    let pfile = PackItFile::new(dst_path, &file_data)?;
-                    ar.write_file(&pfile)?;
-                }
-            }
+            ar.load_file(dst_path, &file)?;
         } else if etype.is_dir() {
             self.process_entries(fs::read_dir(&path)?, ar)?;
         }
