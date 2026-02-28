@@ -71,9 +71,7 @@ impl PackParams {
         ar: &mut PackItArchiveEncoder<W>,
     ) -> PackItResult<()> {
         let path = entry.path();
-        let file = fs::File::open(&path)?;
-        let meta = file.metadata()?;
-        let etype = meta.file_type();
+        let etype = entry.file_type()?;
 
         if etype.is_file() || (etype.is_symlink() && !self.no_symlinks) {
             // Create the destination path inside the archive
@@ -86,6 +84,9 @@ impl PackParams {
             if self.verbose {
                 println!("{} -> {}", path.display(), dst_path);
             }
+
+            let file = fs::File::open(&path)?;
+            let meta = file.metadata()?;
 
             // Map the file and write it to the archive
             match meta.len() {
