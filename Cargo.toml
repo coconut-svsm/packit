@@ -16,5 +16,5 @@ zerocopy = { version = "0.8.27", features = ["derive"] }
 [features]
 default = []
 alloc = []
-std = ["alloc"]
-cli = ["std", "dep:clap", "dep:memmap2"]
+std = ["alloc", "dep:memmap2"]
+cli = ["std", "dep:clap"]
