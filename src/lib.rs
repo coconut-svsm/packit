@@ -6,7 +6,7 @@
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
-use core::fmt;
+use core::{error::Error, fmt};
 
 // PackItArchive has a Vec of files, so it requires alloc
 #[cfg(feature = "alloc")]
@@ -45,6 +45,16 @@ pub enum PackItError {
 impl From<std::io::Error> for PackItError {
     fn from(e: std::io::Error) -> Self {
         Self::IoError(e)
+    }
+}
+
+impl Error for PackItError {
+    fn source(&self) -> Option<&(dyn Error + 'static)> {
+        match self {
+            #[cfg(feature = "std")]
+            Self::IoError(e) => Some(e),
+            _ => None,
+        }
     }
 }
 
